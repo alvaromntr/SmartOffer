@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clientes · SmartOffer</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="brand">Smart<span>Offer</span></div>
+        <nav class="topnav">
+          <a href="/dashboard.html" class="active">Clientes</a>
+          <a href="/products.html">Produtos</a>
+          <a href="/sales.html">Vendas</a>
+          <a href="/chat.html">Chat IA</a>
+        </nav>
+      </div>
+      <div class="user-box">
+        <span id="user-name"></span>
+        <span class="pill" id="user-role"></span>
+        <button class="btn btn-ghost btn-small" id="logout-btn" style="color:#fff;border-color:#3C4A58;">Sair</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="page-head">
+        <div>
+          <h1>Clientes</h1>
+          <p>Cadastro, consulta e manutenção da carteira de clientes.</p>
+        </div>
+        <button class="btn btn-gold btn-small" id="new-client-btn">+ Novo cliente</button>
+      </div>
+
+      <div class="toolbar">
+        <input type="search" id="search-input" placeholder="Buscar por nome ou e-mail...">
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Telefone</th>
+                <th>Cadastrado em</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="clients-tbody">
+            </tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="empty-state" style="display:none;">
+          Nenhum cliente encontrado. Cadastre o primeiro clicando em "Novo cliente".
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal">
+      <h2 id="modal-title">Novo cliente</h2>
+      <div id="modal-alert" class="alert alert-error"></div>
+      <form id="client-form" novalidate>
+        <input type="hidden" id="client-id">
+        <div class="field">
+          <label for="c-name">Nome</label>
+          <input type="text" id="c-name" required>
+        </div>
+        <div class="field">
+          <label for="c-email">E-mail</label>
+          <input type="email" id="c-email" required>
+        </div>
+        <div class="field">
+          <label for="c-phone">Telefone</label>
+          <input type="text" id="c-phone" placeholder="(11) 90000-0000">
+        </div>
+        <div class="field">
+          <label for="c-notes">Observações</label>
+          <textarea id="c-notes" rows="3"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="cancel-btn">Cancelar</button>
+          <button type="submit" class="btn btn-gold" id="save-btn">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>

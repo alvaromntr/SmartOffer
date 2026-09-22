@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entrar · SmartOffer</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="auth-shell">
+    <aside class="auth-side">
+      <div class="brand">Smart<span>Offer</span></div>
+      <div class="pitch">
+      </div>
+      <div class="foot-note">Acesso restrito. Todas as ações são registradas em log de auditoria.</div>
+    </aside>
+
+    <main class="auth-main">
+      <div class="auth-card">
+        <h1>Bem-vindo de volta</h1>
+        <p class="sub">Entre com sua conta para continuar.</p>
+
+        <div id="alert" class="alert alert-error"></div>
+
+        <form id="login-form" novalidate>
+          <div class="field">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required>
+          </div>
+          <button type="submit" class="btn btn-gold" id="submit-btn">Entrar</button>
+        </form>
+
+        <p class="switch-line">Ainda não tem conta? <a href="/register.html">Criar conta</a></p>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const alertBox = document.getElementById('alert');
+
+    if (params.get('expired') === '1') {
+      alertBox.textContent = 'Sua sessão expirou. Faça login novamente.';
+      alertBox.classList.add('show');
+    }
+    if (params.get('registered') === '1') {
+      alertBox.classList.remove('alert-error');
+      alertBox.classList.add('alert-success', 'show');
+      alertBox.textContent = 'Conta criada com sucesso. Faça login para continuar.';
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Entrando...';
+      alertBox.classList.remove('show', 'alert-success');
+      alertBox.classList.add('alert-error');
+
+      try {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        const data = await apiRequest('/auth/login', {
+          method: 'POST',
+          auth: false,
+          body: { email, password },
+        });
+
+        setSession(data.token, data.user);
+        window.location.href = '/dashboard.html';
+      } catch (err) {
+        alertBox.textContent = err.message;
+        alertBox.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Entrar';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat IA · SmartOffer</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="brand">Smart<span>Offer</span></div>
+        <nav class="topnav">
+          <a href="/dashboard.html">Clientes</a>
+          <a href="/products.html">Produtos</a>
+          <a href="/sales.html">Vendas</a>
+          <a href="/chat.html" class="active">Chat IA</a>
+        </nav>
+      </div>
+      <div class="user-box">
+        <span id="user-name"></span>
+        <span class="pill" id="user-role"></span>
+        <button class="btn btn-ghost btn-small" id="logout-btn" style="color:#fff;border-color:#3C4A58;">Sair</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="page-head">
+        <div>
+          <h1>Chat de sugestões (IA)</h1>
+          <p>Escolha um cliente e converse com a IA sobre recomendações de produtos baseadas no histórico de compras dele.</p>
+        </div>
+      </div>
+
+      <div class="chat-layout card">
+        <div class="chat-client-list" id="chat-client-list">
+          <div class="chat-mode-tabs">
+            <button type="button" class="chat-mode-btn active" data-mode="general">💬 Geral</button>
+          </div>
+          <div class="chat-client-divider">Ou escolha um cliente:</div>
+          <div id="chat-client-items"></div>
+        </div>
+        <div class="chat-panel">
+          <div class="chat-panel-head" id="chat-panel-head">Modo geral — pergunte sobre qualquer cliente ou produto</div>
+          <div class="chat-messages" id="chat-messages">
+            <div class="chat-empty" id="chat-empty"></div>
+          </div>
+          <div class="chat-input-row">
+            <input type="text" id="chat-input" placeholder="Ex: chegou uma decoração de praia, quem vai gostar?">
+            <button class="btn btn-gold btn-small" id="chat-send-btn">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/chat.js"></script>
+</body>
+</html>

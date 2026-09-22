@@ -1,0 +1,14 @@
+# Segredos e configuração local — NUNCA versionar
+.env
+.env.local
+
+# Dependências (reinstaladas via "npm install", não precisam ir pro Git)
+node_modules/
+
+# Logs
+npm-debug.log*
+*.log
+
+# Sistema operacional
+.DS_Store
+Thumbs.db

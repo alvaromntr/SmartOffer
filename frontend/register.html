@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Criar conta · SmartOffer</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="auth-shell">
+    <aside class="auth-side">
+      <div class="brand">Smart<span>Offer</span></div>
+      <div class="pitch">
+ 
+      </div>
+      <div class="foot-note">Ao criar uma conta, você concorda com nosso Termo de Uso e Política de Privacidade.</div>
+    </aside>
+
+    <main class="auth-main">
+      <div class="auth-card">
+        <h1>Criar conta</h1>
+   
+
+        <div id="alert" class="alert alert-error"></div>
+
+        <form id="register-form" novalidate>
+          <div class="field">
+            <label for="name">Nome completo</label>
+            <input type="text" id="name" name="name" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" name="email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="password">Senha</label>
+            <input type="password" id="password" name="password" autocomplete="new-password" minlength="8" required>
+          </div>
+          <div class="field">
+            <label for="password2">Confirmar senha</label>
+            <input type="password" id="password2" name="password2" autocomplete="new-password" minlength="8" required>
+          </div>
+
+          <label class="field-check">
+            <input type="checkbox" id="acceptTerms" required>
+            <span>Li e aceito o <a href="/terms.html" target="_blank">Termo de Uso</a> e a <a href="/privacy.html" target="_blank">Política de Privacidade</a>, incluindo o tratamento dos meus dados conforme a LGPD.</span>
+          </label>
+
+          <button type="submit" class="btn btn-gold" id="submit-btn">Criar conta</button>
+        </form>
+
+        <p class="switch-line">Já tem conta? <a href="/login.html">Entrar</a></p>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/api.js"></script>
+  <script>
+    const alertBox = document.getElementById('alert');
+
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      alertBox.classList.remove('show');
+
+      const password = document.getElementById('password').value;
+      const password2 = document.getElementById('password2').value;
+      const acceptTerms = document.getElementById('acceptTerms').checked;
+
+      if (password !== password2) {
+        alertBox.textContent = 'As senhas não coincidem.';
+        alertBox.classList.add('show');
+        return;
+      }
+      if (!acceptTerms) {
+        alertBox.textContent = 'É necessário aceitar o Termo de Uso e a Política de Privacidade.';
+        alertBox.classList.add('show');
+        return;
+      }
+
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Criando conta...';
+
+      try {
+        await apiRequest('/auth/register', {
+          method: 'POST',
+          auth: false,
+          body: {
+            name: document.getElementById('name').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            password,
+            acceptTerms: String(acceptTerms),
+          },
+        });
+
+        window.location.href = '/login.html?registered=1';
+      } catch (err) {
+        alertBox.textContent = err.message;
+        alertBox.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Criar conta';
+      }
+    });
+  </script>
+</body>
+</html>

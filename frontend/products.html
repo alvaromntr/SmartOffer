@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produtos · SmartOffer</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="brand">Smart<span>Offer</span></div>
+        <nav class="topnav">
+          <a href="/dashboard.html">Clientes</a>
+          <a href="/products.html" class="active">Produtos</a>
+          <a href="/sales.html">Vendas</a>
+          <a href="/chat.html">Chat IA</a>
+        </nav>
+      </div>
+      <div class="user-box">
+        <span id="user-name"></span>
+        <span class="pill" id="user-role"></span>
+        <button class="btn btn-ghost btn-small" id="logout-btn" style="color:#fff;border-color:#3C4A58;">Sair</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="page-head">
+        <div>
+          <h1>Produtos</h1>
+          <p>Catálogo de produtos disponíveis para venda e recomendação.</p>
+        </div>
+        <button class="btn btn-gold btn-small" id="new-product-btn">+ Novo produto</button>
+      </div>
+
+      <div class="toolbar">
+        <input type="search" id="search-input" placeholder="Buscar por nome...">
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Preço</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="products-tbody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="empty-state" style="display:none;">
+          Nenhum produto encontrado. Cadastre o primeiro clicando em "Novo produto".
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal">
+      <h2 id="modal-title">Novo produto</h2>
+      <div id="modal-alert" class="alert alert-error"></div>
+      <form id="product-form" novalidate>
+        <input type="hidden" id="p-id">
+        <div class="field">
+          <label for="p-name">Nome</label>
+          <input type="text" id="p-name" required>
+        </div>
+        <div class="field">
+          <label for="p-price">Preço (R$)</label>
+          <input type="number" id="p-price" step="0.01" min="0" required>
+        </div>
+        <div class="field">
+          <label for="p-description">Descrição</label>
+          <textarea id="p-description" rows="3"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="cancel-btn">Cancelar</button>
+          <button type="submit" class="btn btn-gold" id="save-btn">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/products.js"></script>
+</body>
+</html>

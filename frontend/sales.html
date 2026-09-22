@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vendas · SmartOffer</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="brand">Smart<span>Offer</span></div>
+        <nav class="topnav">
+          <a href="/dashboard.html">Clientes</a>
+          <a href="/products.html">Produtos</a>
+          <a href="/sales.html" class="active">Vendas</a>
+          <a href="/chat.html">Chat IA</a>
+        </nav>
+      </div>
+      <div class="user-box">
+        <span id="user-name"></span>
+        <span class="pill" id="user-role"></span>
+        <button class="btn btn-ghost btn-small" id="logout-btn" style="color:#fff;border-color:#3C4A58;">Sair</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="page-head">
+        <div>
+          <h1>Vendas</h1>
+          <p>Registro de vendas por cliente — esse histórico alimenta as sugestões da IA.</p>
+        </div>
+        <button class="btn btn-gold btn-small" id="new-sale-btn">+ Registrar venda</button>
+      </div>
+
+      <div class="toolbar">
+        <select id="filter-client" style="flex:1;min-width:200px;padding:10px 13px;border:1px solid var(--line);border-radius:8px;">
+          <option value="">Todos os clientes</option>
+        </select>
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Produto</th>
+                <th>Qtd.</th>
+                <th>Preço unit.</th>
+                <th>Data</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="sales-tbody"></tbody>
+          </table>
+        </div>
+        <div class="empty-state" id="empty-state" style="display:none;">
+          Nenhuma venda registrada ainda.
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modal-backdrop">
+    <div class="modal">
+      <h2>Registrar venda</h2>
+      <div id="modal-alert" class="alert alert-error"></div>
+      <form id="sale-form" novalidate>
+        <div class="field">
+          <label for="s-client">Cliente</label>
+          <select id="s-client" required style="width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:8px;"></select>
+        </div>
+        <div class="field">
+          <label for="s-product">Produto</label>
+          <select id="s-product" required style="width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:8px;"></select>
+        </div>
+        <div class="field">
+          <label for="s-quantity">Quantidade</label>
+          <input type="number" id="s-quantity" min="1" value="1" required>
+        </div>
+        <div class="field">
+          <label for="s-date">Data da venda</label>
+          <input type="date" id="s-date">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="cancel-btn">Cancelar</button>
+          <button type="submit" class="btn btn-gold" id="save-btn">Registrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/sales.js"></script>
+</body>
+</html>
