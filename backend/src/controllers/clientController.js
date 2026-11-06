@@ -8,8 +8,8 @@ async function listClients(req, res, next) {
     const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 20));
     const offset = (pageNum - 1) * limitNum;
 
-    const values = [];
-    let where = 'WHERE is_active = TRUE';
+    const values = [req.user.sub];
+    let where = 'WHERE is_active = TRUE AND created_by = $1';
 
     if (search) {
       values.push(`%${search}%`);
@@ -45,8 +45,8 @@ async function getClient(req, res, next) {
     const { id } = req.params;
     const result = await db.query(
       `SELECT id, name, email, phone, notes, created_at, updated_at
-       FROM clients WHERE id = $1 AND is_active = TRUE`,
-      [id]
+       FROM clients WHERE id = $1 AND is_active = TRUE AND created_by = $2`,
+      [id, req.user.sub]
     );
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Cliente não encontrado.' });
@@ -87,7 +87,7 @@ async function updateClient(req, res, next) {
     const { id } = req.params;
     const { name, email, phone, notes } = req.body;
 
-    const existing = await db.query('SELECT id FROM clients WHERE id = $1 AND is_active = TRUE', [id]);
+    const existing = await db.query('SELECT id FROM clients WHERE id = $1 AND is_active = TRUE AND created_by = $2', [id, req.user.sub]);
     if (existing.rows.length === 0) {
       return res.status(404).json({ error: 'Cliente não encontrado.' });
     }
@@ -99,7 +99,7 @@ async function updateClient(req, res, next) {
            phone = $3,
            notes = $4,
            updated_by = $5
-       WHERE id = $6
+       WHERE id = $6 AND created_by = $5
        RETURNING id, name, email, phone, notes, created_at, updated_at`,
       [name, email, phone || null, notes || null, req.user.sub, id]
     );
@@ -119,7 +119,7 @@ async function deleteClient(req, res, next) {
     const { id } = req.params;
 
     const result = await db.query(
-      `UPDATE clients SET is_active = FALSE, updated_by = $1 WHERE id = $2 AND is_active = TRUE RETURNING id, name`,
+      `UPDATE clients SET is_active = FALSE, updated_by = $1 WHERE id = $2 AND is_active = TRUE AND created_by = $1 RETURNING id, name`,
       [req.user.sub, id]
     );
 

@@ -4,10 +4,10 @@ const geminiService = require('../services/geminiService');
 
 const MAX_CLIENTS_IN_GENERAL_CONTEXT = 60;
 
-async function buildClientContext(clientId) {
+async function buildClientContext(clientId, userId) {
   const clientResult = await db.query(
-    'SELECT id, name FROM clients WHERE id = $1 AND is_active = TRUE',
-    [clientId]
+    'SELECT id, name FROM clients WHERE id = $1 AND is_active = TRUE AND created_by = $2',
+    [clientId, userId]
   );
   if (clientResult.rows.length === 0) {
     const err = new Error('Cliente não encontrado.');
@@ -20,22 +20,23 @@ async function buildClientContext(clientId) {
     `SELECT p.name AS product_name, s.quantity, s.unit_price, s.sale_date
      FROM sales s
      JOIN products p ON p.id = s.product_id
-     WHERE s.client_id = $1
+     WHERE s.client_id = $1 AND s.created_by = $2
      ORDER BY s.sale_date DESC`,
-    [clientId]
+    [clientId, userId]
   );
 
   const catalogResult = await db.query(
-    `SELECT name, description, price FROM products WHERE is_active = TRUE ORDER BY name ASC`
+    `SELECT name, description, price FROM products WHERE is_active = TRUE AND created_by = $1 ORDER BY name ASC`,
+    [userId]
   );
 
   return { client, purchaseHistory: salesResult.rows, catalog: catalogResult.rows };
 }
 
-async function buildGeneralContext() {
+async function buildGeneralContext(userId) {
   const clientsResult = await db.query(
-    `SELECT id, name FROM clients WHERE is_active = TRUE ORDER BY name ASC LIMIT $1`,
-    [MAX_CLIENTS_IN_GENERAL_CONTEXT]
+    `SELECT id, name FROM clients WHERE is_active = TRUE AND created_by = $2 ORDER BY name ASC LIMIT $1`,
+    [MAX_CLIENTS_IN_GENERAL_CONTEXT, userId]
   );
 
   const salesResult = await db.query(
@@ -48,7 +49,8 @@ async function buildGeneralContext() {
   );
 
   const catalogResult = await db.query(
-    `SELECT name, description, price FROM products WHERE is_active = TRUE ORDER BY name ASC`
+    `SELECT name, description, price FROM products WHERE is_active = TRUE AND created_by = $1 ORDER BY name ASC`,
+    [userId]
   );
 
   const salesByClient = {};
@@ -158,11 +160,11 @@ async function chat(req, res, next) {
     let auditDetails;
 
     if (clientId) {
-      const context = await buildClientContext(clientId);
+      const context = await buildClientContext(clientId, req.user.sub);
       systemInstruction = buildSystemInstructionForClient(context);
       auditDetails = { entity: 'client', entityId: clientId };
     } else {
-      const context = await buildGeneralContext();
+      const context = await buildGeneralContext(req.user.sub);
       systemInstruction = buildSystemInstructionGeneral(context);
       auditDetails = { entity: 'client', entityId: null };
     }

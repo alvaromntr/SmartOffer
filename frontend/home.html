@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Início · SmartOffer</title>
+<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/home.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="brand">Smart<span>Offer</span></div>
+        <nav class="topnav">
+          <a href="/home.html" class="active">Início</a>
+          <a href="/dashboard.html">Clientes</a>
+          <a href="/products.html">Produtos</a>
+          <a href="/sales.html">Vendas</a>
+          <a href="/chat.html">Chat IA</a>
+        </nav>
+      </div>
+      <div class="user-box">
+        <span id="user-name"></span>
+        <span class="pill" id="user-role"></span>
+        <button class="btn btn-ghost btn-small" id="logout-btn" style="color:#fff;border-color:#3C4A58;">Sair</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="home-hello">
+        <h1 id="hello">Olá</h1>
+        <p>Resumo da sua carteira e acesso rápido às ferramentas.</p>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat"><span>Clientes</span><strong id="st-clients">—</strong></div>
+        <div class="stat"><span>Produtos</span><strong id="st-products">—</strong></div>
+        <div class="stat"><span>Vendas registradas</span><strong id="st-sales">—</strong></div>
+        <div class="stat"><span>Receita total</span><strong id="st-revenue">—</strong></div>
+      </div>
+
+      <div class="shortcut-grid">
+        <a class="shortcut" href="/dashboard.html"><strong>Clientes</strong><span>Cadastrar e consultar a carteira</span></a>
+        <a class="shortcut" href="/products.html"><strong>Produtos</strong><span>Gerenciar o catálogo</span></a>
+        <a class="shortcut" href="/sales.html"><strong>Vendas</strong><span>Registrar e acompanhar compras</span></a>
+        <a class="shortcut" href="/chat.html"><strong>Chat IA</strong><span>Descobrir quem tem interesse em um produto</span></a>
+      </div>
+
+      <div class="home-panels">
+        <div class="card">
+          <h2 class="panel-title">Produtos mais vendidos</h2>
+          <div id="top-products"></div>
+          <div class="empty-state" id="top-empty" style="display:none;">Registre vendas para ver o ranking de produtos.</div>
+        </div>
+
+        <div class="card">
+          <h2 class="panel-title">Últimas vendas</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Data</th><th>Cliente</th><th>Produto</th><th>Qtd</th></tr>
+              </thead>
+              <tbody id="recent-tbody"></tbody>
+            </table>
+          </div>
+          <div class="empty-state" id="recent-empty" style="display:none;">Nenhuma venda registrada ainda.</div>
+        </div>
+      </div>
+
+      <div class="card account-box">
+        <div>
+          <h2>Minha conta</h2>
+          <p>Ao excluir a conta, seus clientes, produtos, vendas e consentimentos são apagados de forma definitiva. Essa ação não pode ser desfeita.</p>
+        </div>
+        <button class="btn btn-danger btn-small" id="delete-account-btn">Excluir minha conta</button>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="delete-backdrop">
+    <div class="modal">
+      <h2>Excluir conta</h2>
+      <div id="delete-alert" class="alert alert-error"></div>
+      <p>Para confirmar a exclusão definitiva da sua conta e de todos os seus dados, digite sua senha.</p>
+      <form id="delete-form" novalidate>
+        <div class="field">
+          <label for="delete-password">Senha</label>
+          <input type="password" id="delete-password" autocomplete="current-password" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-ghost" id="delete-cancel-btn">Cancelar</button>
+          <button type="submit" class="btn btn-danger" id="delete-confirm-btn">Excluir definitivamente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/api.js"></script>
+  <script src="/js/home.js"></script>
+</body>
+</html>

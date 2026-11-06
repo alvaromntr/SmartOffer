@@ -4,8 +4,8 @@ const db = require('../config/db');
 async function listProducts(req, res, next) {
   try {
     const { search = '' } = req.query;
-    const values = [];
-    let where = 'WHERE is_active = TRUE';
+    const values = [req.user.sub];
+    let where = 'WHERE is_active = TRUE AND created_by = $1';
 
     if (search) {
       values.push(`%${search}%`);
@@ -30,8 +30,8 @@ async function getProduct(req, res, next) {
     const { id } = req.params;
     const result = await db.query(
       `SELECT id, name, description, price, created_at, updated_at
-       FROM products WHERE id = $1 AND is_active = TRUE`,
-      [id]
+       FROM products WHERE id = $1 AND is_active = TRUE AND created_by = $2`,
+      [id, req.user.sub]
     );
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Produto não encontrado.' });
@@ -75,7 +75,7 @@ async function updateProduct(req, res, next) {
     const { id } = req.params;
     const { name, description, price } = req.body;
 
-    const existing = await db.query('SELECT id FROM products WHERE id = $1 AND is_active = TRUE', [id]);
+    const existing = await db.query('SELECT id FROM products WHERE id = $1 AND is_active = TRUE AND created_by = $2', [id, req.user.sub]);
     if (existing.rows.length === 0) {
       return res.status(404).json({ error: 'Produto não encontrado.' });
     }
@@ -86,7 +86,7 @@ async function updateProduct(req, res, next) {
            description = $2,
            price = COALESCE($3, price),
            updated_by = $4
-       WHERE id = $5
+       WHERE id = $5 AND created_by = $4
        RETURNING id, name, description, price, created_at, updated_at`,
       [name, description || null, price, req.user.sub, id]
     );
@@ -106,7 +106,7 @@ async function deleteProduct(req, res, next) {
     const { id } = req.params;
 
     const result = await db.query(
-      `UPDATE products SET is_active = FALSE, updated_by = $1 WHERE id = $2 AND is_active = TRUE RETURNING id, name`,
+      `UPDATE products SET is_active = FALSE, updated_by = $1 WHERE id = $2 AND is_active = TRUE AND created_by = $1 RETURNING id, name`,
       [req.user.sub, id]
     );
 

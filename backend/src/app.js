@@ -10,6 +10,8 @@ const clientRoutes = require('./routes/clientRoutes');
 const productRoutes = require('./routes/productRoutes');
 const saleRoutes = require('./routes/saleRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const accountRoutes = require('./routes/accountRoutes');
+const dashboardRoutes = require('./routes/dashboardRoutes');
 const auditLogger = require('./middlewares/auditLogger');
 const errorHandler = require('./middlewares/errorHandler');
 
@@ -62,6 +64,8 @@ app.use('/api/clients', clientRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/sales', saleRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/account', accountRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 app.use('/api', (req, res) => {
   res.status(404).json({ error: 'Rota não encontrada.' });

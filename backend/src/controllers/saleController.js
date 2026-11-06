@@ -5,15 +5,15 @@ async function listSales(req, res, next) {
   try {
     const { clientId } = req.query;
 
-    const values = [];
-    let where = '';
+    const values = [req.user.sub];
+    let where = 'WHERE s.created_by = $1';
     if (clientId) {
       values.push(clientId);
-      where = `WHERE s.client_id = $${values.length}`;
+      where += ` AND s.client_id = $${values.length}`;
     }
 
     const result = await db.query(
-      `SELECT s.id, s.quantity, s.unit_price, s.sale_date, s.created_at,
+      `SELECT s.id, s.quantity, s.unit_price, to_char(s.sale_date, 'YYYY-MM-DD') AS sale_date, s.created_at,
               c.id AS client_id, c.name AS client_name,
               p.id AS product_id, p.name AS product_name
        FROM sales s
@@ -40,12 +40,12 @@ async function createSale(req, res, next) {
 
     const qty = Number(quantity) > 0 ? Number(quantity) : 1;
 
-    const clientCheck = await db.query('SELECT id FROM clients WHERE id = $1 AND is_active = TRUE', [clientId]);
+    const clientCheck = await db.query('SELECT id FROM clients WHERE id = $1 AND is_active = TRUE AND created_by = $2', [clientId, req.user.sub]);
     if (clientCheck.rows.length === 0) {
       return res.status(404).json({ error: 'Cliente não encontrado.' });
     }
 
-    const productResult = await db.query('SELECT id, price FROM products WHERE id = $1 AND is_active = TRUE', [productId]);
+    const productResult = await db.query('SELECT id, price FROM products WHERE id = $1 AND is_active = TRUE AND created_by = $2', [productId, req.user.sub]);
     if (productResult.rows.length === 0) {
       return res.status(404).json({ error: 'Produto não encontrado.' });
     }
@@ -77,7 +77,7 @@ async function createSale(req, res, next) {
 async function deleteSale(req, res, next) {
   try {
     const { id } = req.params;
-    const result = await db.query('DELETE FROM sales WHERE id = $1 RETURNING id', [id]);
+    const result = await db.query('DELETE FROM sales WHERE id = $1 AND created_by = $2 RETURNING id', [id, req.user.sub]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Venda não encontrada.' });
