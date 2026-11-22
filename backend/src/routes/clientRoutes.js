@@ -21,7 +21,7 @@ router.post(
   '/',
   [
     body('name').trim().notEmpty().withMessage('Nome é obrigatório.'),
-    body('email').isEmail().withMessage('E-mail inválido.'),
+    body('email').optional({ checkFalsy: true }).isEmail().withMessage('E-mail inválido.'),
     body('phone').optional({ nullable: true }).isString(),
     body('notes').optional({ nullable: true }).isString(),
   ],
@@ -33,7 +33,7 @@ router.put(
   '/:id',
   [
     param('id').isUUID().withMessage('ID inválido.'),
-    body('email').optional().isEmail().withMessage('E-mail inválido.'),
+   body('email').optional({ checkFalsy: true }).isEmail().withMessage('E-mail inválido.'),
   ],
   validate,
   clientController.updateClient

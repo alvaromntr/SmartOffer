@@ -119,12 +119,20 @@ modalBackdrop.addEventListener('click', (e) => {
 saleForm.addEventListener('submit', async (e) => {
   e.preventDefault();
 
+  const quantity = parseInt(document.getElementById('s-quantity').value, 10);
+
   const payload = {
     clientId: document.getElementById('s-client').value,
     productId: document.getElementById('s-product').value,
-    quantity: parseInt(document.getElementById('s-quantity').value, 10) || 1,
+    quantity,
     saleDate: document.getElementById('s-date').value || undefined,
   };
+
+  if (!Number.isInteger(quantity) || quantity < 1) {
+    modalAlert.textContent = 'A quantidade deve ser um número inteiro maior que zero.';
+    modalAlert.classList.add('show');
+    return;
+  }
 
   if (!payload.clientId || !payload.productId) {
     modalAlert.textContent = 'Cadastre ao menos um cliente e um produto antes de registrar uma venda.';

@@ -61,15 +61,17 @@ async function createClient(req, res, next) {
   try {
     const { name, email, phone, notes } = req.body;
 
-    if (!name || !email) {
-      return res.status(400).json({ error: 'Nome e e-mail são obrigatórios.' });
-    }
+if (!name || !name.trim()) {
+  return res.status(400).json({ error: 'O nome é obrigatório.' });
+}
+
+const emailValue = email && email.trim() ? email.trim().toLowerCase() : null;
 
     const result = await db.query(
       `INSERT INTO clients (name, email, phone, notes, created_by, updated_by)
        VALUES ($1,$2,$3,$4,$5,$5)
        RETURNING id, name, email, phone, notes, created_at, updated_at`,
-      [name.trim(), email.trim().toLowerCase(), phone || null, notes || null, req.user.sub]
+     [name.trim(), emailValue, phone || null, notes || null, req.user.sub]
     );
 
     const client = result.rows[0];
@@ -86,6 +88,7 @@ async function updateClient(req, res, next) {
   try {
     const { id } = req.params;
     const { name, email, phone, notes } = req.body;
+    const emailValue = email && email.trim() ? email.trim().toLowerCase() : null;   
 
     const existing = await db.query('SELECT id FROM clients WHERE id = $1 AND is_active = TRUE AND created_by = $2', [id, req.user.sub]);
     if (existing.rows.length === 0) {
@@ -95,13 +98,13 @@ async function updateClient(req, res, next) {
     const result = await db.query(
       `UPDATE clients
        SET name = COALESCE($1, name),
-           email = COALESCE($2, email),
+           email = $2,                                                              
            phone = $3,
            notes = $4,
            updated_by = $5
        WHERE id = $6 AND created_by = $5
        RETURNING id, name, email, phone, notes, created_at, updated_at`,
-      [name, email, phone || null, notes || null, req.user.sub, id]
+      [name, emailValue, phone || null, notes || null, req.user.sub, id]            
     );
 
     const client = result.rows[0];

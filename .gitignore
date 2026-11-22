@@ -12,3 +12,12 @@ npm-debug.log*
 # Sistema operacional
 .DS_Store
 Thumbs.db
+
+# Arquivos temporários de entrega
+*.zip
+aplicar-*.js
+
+# Editor
+.vscode/
+.idea/
+coverage/
